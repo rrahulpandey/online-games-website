@@ -4,152 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battle Crown | Master Chess ♟️</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.js"></script>
-
     <style>
-        /* 1. MOVING BACKGROUND & THEME */
+        /* 1. ANIMATED BACKGROUND */
         body {
-            margin: 0; padding: 0;
-            background-color: #0a0a0c;
-            color: white; font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0; font-family: sans-serif;
+            background-color: #0a0a0c; color: white; text-align: center;
             background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%);
-            background-size: 60px 60px;
-            animation: moveBoard 20s linear infinite;
-            display: flex; flex-direction: column; align-items: center;
+            background-size: 60px 60px; animation: moveBg 20s linear infinite;
         }
+        @keyframes moveBg { from { background-position: 0 0; } to { background-position: 60px 60px; } }
 
-        @keyframes moveBoard { from { background-position: 0 0; } to { background-position: 60px 60px; } }
-
-        h1 { margin-top: 20px; text-shadow: 0 0 15px #00f2ff; letter-spacing: 2px; }
-
-        /* 2. CHESS WRAPPER (Tera Layout) */
-        #wrap {
-            display: flex; justify-content: center; align-items: flex-start;
-            gap: 20px; margin-top: 30px; flex-wrap: wrap;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px; border-radius: 20px; backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 242, 255, 0.2);
+        /* 2. CHESS BOARD DESIGN */
+        #chess-container {
+            display: flex; flex-direction: column; align-items: center; margin-top: 30px;
         }
-
-        .chess-panel {
-            width: 150px; padding: 15px; border-radius: 10px;
-            background: rgba(0, 0, 0, 0.5); border: 1px solid #333;
+        .board {
+            display: grid; grid-template-columns: repeat(8, 45px); grid-template-rows: repeat(8, 45px);
+            border: 5px solid #00f2ff; box-shadow: 0 0 20px #00f2ff;
         }
+        .sq { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; }
+        .white-sq { background-color: #eee; }
+        .black-sq { background-color: #444; }
+        .selected { background-color: #00f2ff !important; }
 
-        #chess-board {
-            width: 400px; max-width: 90vw;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
-            border: 5px solid #1e293b; border-radius: 5px;
-        }
-
-        .status-box {
-            margin-top: 20px; background: #00f2ff; color: black;
-            padding: 10px 20px; border-radius: 5px; font-weight: bold;
-        }
-
-        /* 3. BUTTONS */
-        .btn-group { margin-top: 20px; }
-        button {
-            padding: 10px 20px; border: none; border-radius: 20px;
-            background: #ff4b2b; color: white; cursor: pointer; font-weight: bold;
-        }
+        /* 3. PANELS (Tera Original Idea) */
+        .panel-wrap { display: flex; gap: 20px; margin-bottom: 20px; }
+        .panel { padding: 10px; border: 1px solid #00f2ff; border-radius: 10px; background: rgba(0,0,0,0.5); width: 100px; }
+        
+        button { margin-top: 20px; padding: 10px 20px; border-radius: 20px; border: none; background: #ff4b2b; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <h1>BATTLE CROWN 🎮</h1>
+    <h1 style="text-shadow: 0 0 10px #00f2ff;">BATTLE CROWN 🎮</h1>
 
-    <div id="chess">
-        <div id="wrap">
-            <div id="white-panel" class="chess-panel white">
-                <div class="chess-panel-header">
-                    <h2 style="font-size: 18px; color: #00f2ff;">White</h2>
-                </div>
-                <div class="taken-pieces" id="white-status">In Game</div>
-            </div>
-
-            <div id="chess-board"></div>
-
-            <div id="black-panel" class="chess-panel black">
-                <div class="chess-panel-header">
-                    <h2 style="font-size: 18px; color: #00f2ff;">Black</h2>
-                </div>
-                <div class="taken-pieces" id="black-status">Waiting</div>
-            </div>
+    <div id="chess-container">
+        <div class="panel-wrap">
+            <div class="panel"><b>White</b><br><span id="w-status">Turn</span></div>
+            <div class="panel"><b>Black</b><br><span id="b-status">-</span></div>
         </div>
-    </div>
 
-    <div class="status-box" id="game-info">White's Turn</div>
-
-    <div class="btn-group">
-        <button onclick="resetGame()">RESET GAME</button>
+        <div id="board" class="board"></div>
+        
+        <button onclick="setupBoard()">RESET GAME</button>
     </div>
 
     <script>
-        var board = null;
-        var game = new Chess();
-        var $status = $('#game-info');
-
-        function onDragStart (source, piece, position, orientation) {
-            if (game.game_over()) return false;
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
-            }
-        }
-
-        function onDrop (source, target) {
-            var move = game.move({ from: source, to: target, promotion: 'q' });
-            if (move === null) return 'snapback';
-            updateStatus();
-        }
-
-        function onSnapEnd () { board.position(game.fen()); }
-
-        function updateStatus () {
-            var status = '';
-            var moveColor = 'White';
-            if (game.turn() === 'b') moveColor = 'Black';
-
-            if (game.in_checkmate()) {
-                status = 'Game over, ' + moveColor + ' is in checkmate.';
-            } else if (game.in_draw()) {
-                status = 'Game over, drawn position';
-            } else {
-                status = moveColor + ' to move';
-                if (game.in_check()) status += ', ' + moveColor + ' is in check';
-            }
-            $status.html(status);
-            
-            // Panel update
-            if(game.turn() === 'w') {
-                $('#white-status').text('Playing...');
-                $('#black-status').text('Waiting');
-            } else {
-                $('#black-status').text('Playing...');
-                $('#white-status').text('Waiting');
-            }
-        }
-
-        function resetGame() {
-            game.reset();
-            board.start();
-            updateStatus();
-        }
-
-        var config = {
-            draggable: true,
-            position: 'start',
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            onSnapEnd: onSnapEnd
+        // Chess Pieces (Unicode)
+        const pieces = {
+            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
         };
-        board = Chessboard('chess-board', config);
-        updateStatus();
+
+        // Initial Board Layout
+        let boardState = [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
+        ];
+
+        let selectedSq = null;
+
+        function setupBoard() {
+            const boardDiv = document.getElementById('board');
+            boardDiv.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const sq = document.createElement('div');
+                    sq.className = `sq ${(r + c) % 2 === 0 ? 'white-sq' : 'black-sq'}`;
+                    sq.dataset.r = r; sq.dataset.c = c;
+                    sq.innerHTML = pieces[boardState[r][c]] || '';
+                    sq.onclick = () => handleSqClick(r, c);
+                    boardDiv.appendChild(sq);
+                }
+            }
+        }
+
+        function handleSqClick(r, c) {
+            if (selectedSq) {
+                // Move Piece
+                boardState[r][c] = boardState[selectedSq.r][selectedSq.c];
+                boardState[selectedSq.r][selectedSq.c] = '';
+                selectedSq = null;
+                setupBoard();
+            } else {
+                if (boardState[r][c] !== '') {
+                    selectedSq = {r, c};
+                    setupBoard();
+                    // Highlight selected
+                    const idx = r * 8 + c;
+                    document.getElementsByClassName('sq')[idx].classList.add('selected');
+                }
+            }
+        }
+
+        setupBoard();
     </script>
 </body>
 </html>
