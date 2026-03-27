@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Chess Website</title>
+
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.css" />
+</head>
+
+<body>
+
+  <h1>Welcome to My Chess Game</h1>
+
+  <div id="board" style="width: 400px"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.0/chess.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.js"></script>
+
+  <script>
+    var game = new Chess();
+
+    var board = Chessboard('board', {
+      draggable: true,
+      position: 'start',
+
+      onDrop: function (source, target) {
+        var move = game.move({
+          from: source,
+          to: target,
+          promotion: 'q'
+        });
+
+        if (move === null) return 'snapback';
+      }
+    });
+  </script>
+
+</body>
+</html>
