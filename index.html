@@ -3,133 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Battle Crown | Play Instantly 🎮</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.css">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.js"></script>
+<title>Battle Crown | Pro Gaming Portal 🎮</title>
 
 <style>
+    /* ANIMATED CHESS BACKGROUND */
     body {
-        margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-        color: white; text-align: center; background-color: #0a0a0c;
-        background-image: linear-gradient(45deg, #16161d 25%, transparent 25%), linear-gradient(-45deg, #16161d 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #16161d 75%), linear-gradient(-45deg, transparent 75%, #16161d 75%);
-        background-size: 60px 60px; animation: moveBoard 20s linear infinite;
+        margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
+        color: white; text-align: center; background-color: #050505;
+        background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%);
+        background-size: 50px 50px; animation: moveBg 15s linear infinite;
+        overflow-x: hidden;
     }
-    @keyframes moveBoard { from { background-position: 0 0; } to { background-position: 60px 60px; } }
+    @keyframes moveBg { from { background-position: 0 0; } to { background-position: 50px 50px; } }
 
-    .games-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 50px; }
-    
-    .card {
-        background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;
-        width: 180px; padding: 20px; transition: 0.3s; cursor: pointer;
+    h1 { margin-top: 40px; font-size: 2.5rem; text-shadow: 0 0 20px #00f2ff; letter-spacing: 3px; }
+
+    .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 40px; padding: 20px; }
+
+    /* PRO GAME CARDS */
+    .game-card {
+        background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 20px;
+        width: 200px; padding: 15px; transition: 0.4s; cursor: pointer;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     }
-    .card:hover { transform: translateY(-10px); border-color: #00f2ff; box-shadow: 0 0 20px rgba(0,242,255,0.3); }
+    .game-card:hover { transform: scale(1.08); border-color: #00f2ff; box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); }
+
+    .game-thumb { width: 100%; height: 120px; border-radius: 12px; background: #222; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
 
     .play-btn {
         background: linear-gradient(45deg, #00f2ff, #0072ff); border: none;
-        padding: 10px; border-radius: 20px; color: white; font-weight: bold; cursor: pointer; width: 100%;
+        padding: 12px; border-radius: 30px; color: white; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 12px;
     }
 
-    /* MODAL SYSTEM */
-    #gameOverlay {
+    /* FULL SCREEN MODAL */
+    #player {
         display: none; position: fixed; top: 0; left: 0;
-        width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000;
+        width: 100%; height: 100%; background: #000; z-index: 9999;
     }
-    .modal-nav {
-        height: 60px; background: #111; display: flex; 
-        justify-content: space-between; align-items: center; padding: 0 20px;
-    }
-    .close-btn { background: #ff4b2b; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-
-    /* GAME AREAS */
-    #chessBoard { width: 350px; margin: 20px auto; max-width: 90vw; }
-    .ttt-grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 10px; margin: 40px auto; justify-content: center; }
-    .cell { width: 80px; height: 80px; background: #1e293b; border: 2px solid #00f2ff; font-size: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 8px; }
+    .top-bar { height: 50px; background: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid #00f2ff; }
+    .close-btn { background: #ff4b2b; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    iframe { width: 100%; height: calc(100% - 50px); border: none; }
 </style>
 </head>
 
 <body>
 
 <h1>BATTLE CROWN 🎮</h1>
+<p style="color: #00f2ff;">Premium Games. No Downloads.</p>
 
-<div class="games-container">
-    <div class="card" onclick="openChess()">
-        <div style="font-size: 40px;">♟️</div>
-        <h2>Master Chess</h2>
-        <button class="play-btn">PLAY NOW</button>
+<div class="container">
+    <div class="game-card" onclick="play('https://games.poki.com/458742/chess-master')">
+        <div class="game-thumb">♟️</div>
+        <h3>Master Chess</h3>
+        <button class="play-btn">Play Now</button>
     </div>
 
-    <div class="card" onclick="openTTT()">
-        <div style="font-size: 40px;">❌⭕</div>
-        <h2>Tic Tac Toe</h2>
-        <button class="play-btn">PLAY NOW</button>
+    <div class="game-card" onclick="play('https://games.poki.com/458742/moto-x3m')">
+        <div class="game-thumb">🏍️</div>
+        <h3>Moto X3M</h3>
+        <button class="play-btn">Play Now</button>
+    </div>
+
+    <div class="game-card" onclick="play('https://games.poki.com/458742/tic-tac-toe')">
+        <div class="game-thumb">❌</div>
+        <h3>Pro TicTacToe</h3>
+        <button class="play-btn">Play Now</button>
     </div>
 </div>
 
-<div id="gameOverlay">
-    <div class="modal-nav">
-        <span id="gameTitle" style="color: #00f2ff; font-weight: bold;">GAME PLAYER</span>
-        <div class="close-btn" onclick="closeGame()">CLOSE [X]</div>
+<div id="player">
+    <div class="top-bar">
+        <span style="color:#00f2ff; font-weight:bold;">BATTLE CROWN PLAYER</span>
+        <div class="close-btn" onclick="stop()">CLOSE [X]</div>
     </div>
-
-    <div id="chessContainer" style="display:none;">
-        <div id="chessBoard"></div>
-        <p id="status">Turn: White</p>
-        <button onclick="resetChess()" style="padding:10px; background:#00f2ff; border:none; border-radius:5px; cursor:pointer;">Reset Game</button>
-    </div>
-
-    <div id="tttContainer" style="display:none;">
-        <div class="ttt-grid" id="tttGrid"></div>
-        <h2 id="tttStatus">Your Turn: X</h2>
-        <button onclick="resetTTT()" style="padding:10px; background:#00f2ff; border:none; border-radius:5px; cursor:pointer;">Restart</button>
-    </div>
+    <iframe id="gameFrame" src="" allowfullscreen></iframe>
 </div>
 
 <script>
-    const overlay = document.getElementById('gameOverlay');
-    const chessCont = document.getElementById('chessContainer');
-    const tttCont = document.getElementById('tttContainer');
-
-    // --- CHESS LOGIC ---
-    var board = null;
-    var game = new Chess();
-    function onDrop(source, target) {
-        var move = game.move({ from: source, to: target, promotion: 'q' });
-        if (move === null) return 'snapback';
-        document.getElementById('status').innerText = "Turn: " + (game.turn() === 'w' ? 'White' : 'Black');
+    function play(url) {
+        document.getElementById('gameFrame').src = url;
+        document.getElementById('player').style.display = 'block';
     }
-    function openChess() {
-        overlay.style.display = 'block'; chessCont.style.display = 'block'; tttCont.style.display = 'none';
-        document.getElementById('gameTitle').innerText = "MASTER CHESS";
-        setTimeout(() => {
-            board = Chessboard('chessBoard', { draggable: true, position: 'start', onDrop: onDrop });
-        }, 200);
+    function stop() {
+        document.getElementById('player').style.display = 'none';
+        document.getElementById('gameFrame').src = '';
     }
-    function resetChess() { game.reset(); board.start(); document.getElementById('status').innerText = "Turn: White"; }
-
-    // --- TIC TAC TOE LOGIC ---
-    let tttPlayer = "X";
-    let tttState = ["", "", "", "", "", "", "", "", ""];
-    function openTTT() {
-        overlay.style.display = 'block'; tttCont.style.display = 'block'; chessCont.style.display = 'none';
-        document.getElementById('gameTitle').innerText = "TIC TAC TOE";
-        renderTTT();
-    }
-    function renderTTT() {
-        const grid = document.getElementById('tttGrid'); grid.innerHTML = "";
-        tttState.forEach((val, i) => {
-            const div = document.createElement('div'); div.className = 'cell'; div.innerText = val;
-            div.onclick = () => { if(!val) { tttState[i] = tttPlayer; tttPlayer = tttPlayer === "X" ? "O" : "X"; renderTTT(); } };
-            grid.appendChild(div);
-        });
-        document.getElementById('tttStatus').innerText = "Next Player: " + tttPlayer;
-    }
-    function resetTTT() { tttState = ["", "", "", "", "", "", "", "", ""]; tttPlayer = "X"; renderTTT(); }
-
-    function closeGame() { overlay.style.display = 'none'; }
 </script>
 
 </body>
