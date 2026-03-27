@@ -1,83 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Game Hub 🎮</title>
+<title>Game Hub 🎮</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: linear-gradient(270deg, #1f1c2c, #928dab);
-            background-size: 400% 400%;
-            animation: bgMove 10s infinite;
-            color: white;
-            text-align: center;
-        }
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    color:white;
+    text-align:center;
+    background:black;
+    overflow-x:hidden;
+}
 
-        @keyframes bgMove {
-            0% {background-position: 0%}
-            50% {background-position: 100%}
-            100% {background-position: 0%}
-        }
+/* Animated Chess Background */
+body::before {
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+    linear-gradient(45deg, #fff 25%, transparent 25%),
+    linear-gradient(-45deg, #fff 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #fff 75%),
+    linear-gradient(-45deg, transparent 75%, #fff 75%);
+    background-size:60px 60px;
+    opacity:0.05;
+    animation: move 5s linear infinite;
+}
 
-        h1 {
-            padding: 20px;
-        }
+@keyframes move {
+    from {background-position:0 0;}
+    to {background-position:60px 60px;}
+}
 
-        .games {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+h1 {
+    padding:20px;
+}
 
-        .card {
-            background: rgba(255,255,255,0.1);
-            margin: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            width: 200px;
-            transition: 0.3s;
-        }
+.games {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+}
 
-        .card:hover {
-            transform: scale(1.1);
-            background: rgba(255,255,255,0.2);
-        }
+.card {
+    background:rgba(255,255,255,0.1);
+    margin:20px;
+    padding:20px;
+    border-radius:15px;
+    width:220px;
+    backdrop-filter: blur(10px);
+    transition:0.3s;
+}
 
-        button {
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 10px;
-            background: #ff9800;
-            color: white;
-            cursor: pointer;
-        }
+.card:hover {
+    transform:scale(1.1);
+}
 
-    </style>
+/* Tic Tac Toe Board */
+#ttt {
+    display:grid;
+    grid-template-columns:repeat(3,80px);
+    margin:auto;
+}
+
+.cell {
+    width:80px;
+    height:80px;
+    border:2px solid white;
+    font-size:30px;
+    line-height:80px;
+    cursor:pointer;
+}
+
+button {
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#ff9800;
+    color:white;
+    cursor:pointer;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>🎮 Welcome to Game Hub</h1>
+<h1>🎮 Game Hub</h1>
 
 <div class="games">
 
-    <div class="card">
-        <h2>♟️ Chess</h2>
-        <p>Play with AI</p>
-        <a href="https://www.chess.com/play/computer" target="_blank">
-            <button>Play Now</button>
-        </a>
-    </div>
+<div class="card">
+<h2>♟️ Chess</h2>
+<p>Play Online</p>
+<a href="https://www.chess.com/play/computer" target="_blank">
+<button>Play Now</button>
+</a>
+</div>
 
-    <div class="card">
-        <h2>❌⭕ Tic Tac Toe</h2>
-        <p>2 Player Game</p>
-        <button onclick="alert('Coming Soon')">Play Now</button>
-    </div>
+<div class="card">
+<h2>❌⭕ Tic Tac Toe</h2>
+
+<div id="ttt"></div>
+<button onclick="reset()">Reset</button>
 
 </div>
+
+</div>
+
+<script>
+let board = document.getElementById("ttt");
+let current = "X";
+let cells = [];
+
+for(let i=0;i<9;i++){
+    let div = document.createElement("div");
+    div.className="cell";
+    div.onclick=function(){
+        if(div.innerHTML==""){
+            div.innerHTML=current;
+            current = current=="X"?"O":"X";
+        }
+    }
+    board.appendChild(div);
+    cells.push(div);
+}
+
+function reset(){
+    cells.forEach(c=>c.innerHTML="");
+}
+</script>
 
 </body>
 </html>
