@@ -1,95 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Battle Crown | Pro Gaming Portal 🎮</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Crown | Master Chess ♟️</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.js"></script>
 
-<style>
-    /* ANIMATED CHESS BACKGROUND */
-    body {
-        margin: 0; padding: 0; font-family: 'Poppins', sans-serif;
-        color: white; text-align: center; background-color: #050505;
-        background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%);
-        background-size: 50px 50px; animation: moveBg 15s linear infinite;
-        overflow-x: hidden;
-    }
-    @keyframes moveBg { from { background-position: 0 0; } to { background-position: 50px 50px; } }
+    <style>
+        /* 1. MOVING BACKGROUND & THEME */
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0a0c;
+            color: white; font-family: 'Poppins', sans-serif;
+            background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%);
+            background-size: 60px 60px;
+            animation: moveBoard 20s linear infinite;
+            display: flex; flex-direction: column; align-items: center;
+        }
 
-    h1 { margin-top: 40px; font-size: 2.5rem; text-shadow: 0 0 20px #00f2ff; letter-spacing: 3px; }
+        @keyframes moveBoard { from { background-position: 0 0; } to { background-position: 60px 60px; } }
 
-    .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 40px; padding: 20px; }
+        h1 { margin-top: 20px; text-shadow: 0 0 15px #00f2ff; letter-spacing: 2px; }
 
-    /* PRO GAME CARDS */
-    .game-card {
-        background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-        border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 20px;
-        width: 200px; padding: 15px; transition: 0.4s; cursor: pointer;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
-    .game-card:hover { transform: scale(1.08); border-color: #00f2ff; box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); }
+        /* 2. CHESS WRAPPER (Tera Layout) */
+        #wrap {
+            display: flex; justify-content: center; align-items: flex-start;
+            gap: 20px; margin-top: 30px; flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px; border-radius: 20px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
 
-    .game-thumb { width: 100%; height: 120px; border-radius: 12px; background: #222; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .chess-panel {
+            width: 150px; padding: 15px; border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5); border: 1px solid #333;
+        }
 
-    .play-btn {
-        background: linear-gradient(45deg, #00f2ff, #0072ff); border: none;
-        padding: 12px; border-radius: 30px; color: white; font-weight: bold; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 12px;
-    }
+        #chess-board {
+            width: 400px; max-width: 90vw;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            border: 5px solid #1e293b; border-radius: 5px;
+        }
 
-    /* FULL SCREEN MODAL */
-    #player {
-        display: none; position: fixed; top: 0; left: 0;
-        width: 100%; height: 100%; background: #000; z-index: 9999;
-    }
-    .top-bar { height: 50px; background: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid #00f2ff; }
-    .close-btn { background: #ff4b2b; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    iframe { width: 100%; height: calc(100% - 50px); border: none; }
-</style>
+        .status-box {
+            margin-top: 20px; background: #00f2ff; color: black;
+            padding: 10px 20px; border-radius: 5px; font-weight: bold;
+        }
+
+        /* 3. BUTTONS */
+        .btn-group { margin-top: 20px; }
+        button {
+            padding: 10px 20px; border: none; border-radius: 20px;
+            background: #ff4b2b; color: white; cursor: pointer; font-weight: bold;
+        }
+    </style>
 </head>
-
 <body>
 
-<h1>BATTLE CROWN 🎮</h1>
-<p style="color: #00f2ff;">Premium Games. No Downloads.</p>
+    <h1>BATTLE CROWN 🎮</h1>
 
-<div class="container">
-    <div class="game-card" onclick="play('https://games.poki.com/458742/chess-master')">
-        <div class="game-thumb">♟️</div>
-        <h3>Master Chess</h3>
-        <button class="play-btn">Play Now</button>
+    <div id="chess">
+        <div id="wrap">
+            <div id="white-panel" class="chess-panel white">
+                <div class="chess-panel-header">
+                    <h2 style="font-size: 18px; color: #00f2ff;">White</h2>
+                </div>
+                <div class="taken-pieces" id="white-status">In Game</div>
+            </div>
+
+            <div id="chess-board"></div>
+
+            <div id="black-panel" class="chess-panel black">
+                <div class="chess-panel-header">
+                    <h2 style="font-size: 18px; color: #00f2ff;">Black</h2>
+                </div>
+                <div class="taken-pieces" id="black-status">Waiting</div>
+            </div>
+        </div>
     </div>
 
-    <div class="game-card" onclick="play('https://games.poki.com/458742/moto-x3m')">
-        <div class="game-thumb">🏍️</div>
-        <h3>Moto X3M</h3>
-        <button class="play-btn">Play Now</button>
+    <div class="status-box" id="game-info">White's Turn</div>
+
+    <div class="btn-group">
+        <button onclick="resetGame()">RESET GAME</button>
     </div>
 
-    <div class="game-card" onclick="play('https://games.poki.com/458742/tic-tac-toe')">
-        <div class="game-thumb">❌</div>
-        <h3>Pro TicTacToe</h3>
-        <button class="play-btn">Play Now</button>
-    </div>
-</div>
+    <script>
+        var board = null;
+        var game = new Chess();
+        var $status = $('#game-info');
 
-<div id="player">
-    <div class="top-bar">
-        <span style="color:#00f2ff; font-weight:bold;">BATTLE CROWN PLAYER</span>
-        <div class="close-btn" onclick="stop()">CLOSE [X]</div>
-    </div>
-    <iframe id="gameFrame" src="" allowfullscreen></iframe>
-</div>
+        function onDragStart (source, piece, position, orientation) {
+            if (game.game_over()) return false;
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
 
-<script>
-    function play(url) {
-        document.getElementById('gameFrame').src = url;
-        document.getElementById('player').style.display = 'block';
-    }
-    function stop() {
-        document.getElementById('player').style.display = 'none';
-        document.getElementById('gameFrame').src = '';
-    }
-</script>
+        function onDrop (source, target) {
+            var move = game.move({ from: source, to: target, promotion: 'q' });
+            if (move === null) return 'snapback';
+            updateStatus();
+        }
 
+        function onSnapEnd () { board.position(game.fen()); }
+
+        function updateStatus () {
+            var status = '';
+            var moveColor = 'White';
+            if (game.turn() === 'b') moveColor = 'Black';
+
+            if (game.in_checkmate()) {
+                status = 'Game over, ' + moveColor + ' is in checkmate.';
+            } else if (game.in_draw()) {
+                status = 'Game over, drawn position';
+            } else {
+                status = moveColor + ' to move';
+                if (game.in_check()) status += ', ' + moveColor + ' is in check';
+            }
+            $status.html(status);
+            
+            // Panel update
+            if(game.turn() === 'w') {
+                $('#white-status').text('Playing...');
+                $('#black-status').text('Waiting');
+            } else {
+                $('#black-status').text('Playing...');
+                $('#white-status').text('Waiting');
+            }
+        }
+
+        function resetGame() {
+            game.reset();
+            board.start();
+            updateStatus();
+        }
+
+        var config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd
+        };
+        board = Chessboard('chess-board', config);
+        updateStatus();
+    </script>
 </body>
 </html>
