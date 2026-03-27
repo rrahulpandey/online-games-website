@@ -1,19 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Online Games Website</title>
+    <title>Game Hub 🎮</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: linear-gradient(270deg, #1f1c2c, #928dab);
+            background-size: 400% 400%;
+            animation: bgMove 10s infinite;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes bgMove {
+            0% {background-position: 0%}
+            50% {background-position: 100%}
+            100% {background-position: 0%}
+        }
+
+        h1 {
+            padding: 20px;
+        }
+
+        .games {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            margin: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            width: 200px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #ff9800;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
 </head>
+
 <body>
 
-<h1>♟️ Play Chess Online</h1>
+<h1>🎮 Welcome to Game Hub</h1>
 
-<p>Click below to play chess:</p>
+<div class="games">
 
-<a href="https://www.chess.com/play/computer" target="_blank">
-    <button style="padding:15px; font-size:18px;">
-        ▶ Play Chess Now
-    </button>
-</a>
+    <div class="card">
+        <h2>♟️ Chess</h2>
+        <p>Play with AI</p>
+        <a href="https://www.chess.com/play/computer" target="_blank">
+            <button>Play Now</button>
+        </a>
+    </div>
+
+    <div class="card">
+        <h2>❌⭕ Tic Tac Toe</h2>
+        <p>2 Player Game</p>
+        <button onclick="alert('Coming Soon')">Play Now</button>
+    </div>
+
+</div>
 
 </body>
 </html>
