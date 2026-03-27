@@ -6,65 +6,58 @@
 <style>
 body {
     margin:0;
-    background:black;
-    color:white;
     font-family:Arial;
+    color:white;
     text-align:center;
     overflow:hidden;
+    background: radial-gradient(circle at top, #1a1a2e, #000);
 }
 
-/* Floating icons */
-.icon {
+/* Floating images */
+.bg img {
     position:absolute;
-    font-size:30px;
-    opacity:0.2;
-    animation: float 10s linear infinite;
+    width:60px;
+    opacity:0.15;
+    animation: float linear infinite;
 }
 
 @keyframes float {
     from {
-        transform: translateY(100vh);
+        transform: translateY(100vh) rotate(0deg);
     }
     to {
-        transform: translateY(-100vh);
+        transform: translateY(-100vh) rotate(360deg);
     }
 }
 
 h1 {
     position:relative;
-    z-index:1;
+    z-index:2;
     padding:20px;
 }
 
+/* Game cards */
 .games {
     position:relative;
-    z-index:1;
+    z-index:2;
     display:flex;
     justify-content:center;
 }
 
 .card {
     background:rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
     margin:20px;
     padding:20px;
     border-radius:15px;
     width:220px;
+    transition:0.3s;
+    box-shadow:0 0 20px rgba(255,255,255,0.2);
 }
 
-/* Tic Tac Toe */
-#ttt {
-    display:grid;
-    grid-template-columns:repeat(3,80px);
-    margin:auto;
-}
-
-.cell {
-    width:80px;
-    height:80px;
-    border:2px solid white;
-    font-size:30px;
-    line-height:80px;
-    cursor:pointer;
+.card:hover {
+    transform:scale(1.1);
+    box-shadow:0 0 30px #00f2ff;
 }
 
 button {
@@ -72,8 +65,26 @@ button {
     padding:10px;
     border:none;
     border-radius:10px;
-    background:#ff9800;
-    color:white;
+    background:#00f2ff;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* Tic Tac Toe */
+#ttt {
+    display:grid;
+    grid-template-columns:repeat(3,70px);
+    margin:auto;
+}
+
+.cell {
+    width:70px;
+    height:70px;
+    border:2px solid white;
+    font-size:28px;
+    line-height:70px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -99,12 +110,14 @@ button {
 
 </div>
 
-<!-- Floating Icons -->
-<div class="icon" style="left:10%; animation-duration:12s;">♟️</div>
-<div class="icon" style="left:30%; animation-duration:8s;">❌</div>
-<div class="icon" style="left:50%; animation-duration:10s;">⭕</div>
-<div class="icon" style="left:70%; animation-duration:7s;">🎮</div>
-<div class="icon" style="left:85%; animation-duration:9s;">♜</div>
+<!-- Background Chess Images -->
+<div class="bg">
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt60.png" style="left:10%; animation-duration:12s;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt60.png" style="left:30%; animation-duration:9s;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_klt60.png" style="left:50%; animation-duration:14s;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_blt60.png" style="left:70%; animation-duration:8s;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_nlt60.png" style="left:85%; animation-duration:11s;">
+</div>
 
 <script>
 let board = document.getElementById("ttt");
