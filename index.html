@@ -3,131 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Battle Crown | Game Hub 🎮</title>
+<title>Battle Crown | Play Instantly 🎮</title>
 
 <style>
-    /* 1. MOVING CHESS BACKGROUND */
+    /* MOVING CHESS BACKGROUND */
     body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: white;
-        text-align: center;
-        height: 100vh;
-        overflow: hidden;
+        margin: 0; padding: 0;
+        font-family: 'Segoe UI', sans-serif;
+        color: white; text-align: center;
+        height: 100vh; overflow: hidden;
         background-color: #0a0a0c;
-        /* Chess Pattern */
         background-image: 
             linear-gradient(45deg, #16161d 25%, transparent 25%), 
             linear-gradient(-45deg, #16161d 25%, transparent 25%), 
             linear-gradient(45deg, transparent 75%, #16161d 75%), 
             linear-gradient(-45deg, transparent 75%, #16161d 75%);
-        background-size: 100px 100px;
-        animation: moveBoard 10s linear infinite;
+        background-size: 80px 80px;
+        animation: moveBoard 15s linear infinite;
     }
 
     @keyframes moveBoard {
         0% { background-position: 0 0; }
-        100% { background-position: 100px 100px; }
+        100% { background-position: 80px 80px; }
     }
 
-    /* Overlay for better readability */
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: radial-gradient(circle, transparent 20%, #000 90%);
-        z-index: -1;
-    }
+    h1 { margin-top: 30px; text-shadow: 0 0 15px #00f2ff; }
 
-    h1 {
-        margin-top: 30px;
-        font-size: 2.5rem;
-        text-shadow: 0 0 15px #00f2ff;
-        letter-spacing: 2px;
-    }
-
-    /* 2. SMALL & MODERN GAME CARDS */
     .games-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 50px;
+        display: flex; flex-wrap: wrap;
+        justify-content: center; gap: 20px; margin-top: 50px;
     }
 
     .card {
         background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px); /* Glass effect */
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        width: 180px; /* Small sleek size */
-        padding: 15px;
+        border-radius: 15px; width: 180px; padding: 15px;
         transition: 0.3s;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
-    .card:hover {
-        transform: translateY(-10px);
-        border-color: #00f2ff;
-        box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-    }
+    .card:hover { transform: translateY(-10px); border-color: #00f2ff; }
 
-    /* Small Icons/Titles */
-    .card h2 {
-        font-size: 14px;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        color: #00f2ff;
-    }
+    .icon-box { font-size: 30px; margin-bottom: 10px; }
 
-    .icon-box {
-        font-size: 30px; /* Smaller icon size */
-        margin-bottom: 10px;
-    }
-
-    /* Button Styling */
     button {
         background: linear-gradient(45deg, #00f2ff, #0072ff);
-        border: none;
-        padding: 8px 15px;
-        border-radius: 20px;
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-        width: 100%;
-        transition: 0.2s;
+        border: none; padding: 10px; border-radius: 20px;
+        color: white; font-weight: bold; cursor: pointer; width: 100%;
     }
 
-    button:hover {
-        filter: brightness(1.2);
+    /* --- GAME MODAL (THE POPUP) --- */
+    #gameOverlay {
+        display: none; /* Pehle chhupa rahega */
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1000;
     }
 
-    /* Tic Tac Toe Grid */
-    #ttt {
-        display: grid;
-        grid-template-columns: repeat(3, 40px); /* Smaller grid */
-        gap: 5px;
-        margin: 10px auto;
-        justify-content: center;
+    .modal-content {
+        position: relative; width: 90%; height: 80%;
+        margin: 5% auto; background: #000;
+        border: 2px solid #00f2ff; border-radius: 10px;
     }
 
-    .cell {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(0, 242, 255, 0.3);
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border-radius: 4px;
+    iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
+
+    .close-btn {
+        position: absolute; top: -40px; right: 0;
+        color: white; font-size: 30px; cursor: pointer;
+        background: #ff4b2b; padding: 5px 15px; border-radius: 5px;
     }
-
-    .cell:hover { background: rgba(0, 242, 255, 0.2); }
-
 </style>
 </head>
 
@@ -136,52 +82,35 @@
 <h1>BATTLE CROWN 🎮</h1>
 
 <div class="games-container">
-
     <div class="card">
         <div class="icon-box">♟️</div>
         <h2>Chess Pro</h2>
-        <p style="font-size: 10px; color: #aaa;">Strategy Game</p>
-        <a href="https://www.chess.com/play/computer" target="_blank">
-            <button>PLAY NOW</button>
-        </a>
+        <button onclick="openGame('https://www.chess.com/play/computer')">PLAY NOW</button>
     </div>
 
     <div class="card">
         <div class="icon-box">❌⭕</div>
         <h2>Tic Tac Toe</h2>
-        <div id="ttt"></div>
-        <button onclick="reset()" style="background: transparent; border: 1px solid #00f2ff; margin-top: 5px;">RESET</button>
+        <button onclick="alert('Tic Tac Toe is coming to fullscreen soon!')">PLAY NOW</button>
     </div>
+</div>
 
-    <div class="card" style="opacity: 0.5;">
-        <div class="icon-box">🕹️</div>
-        <h2>Coming Soon</h2>
-        <button disabled style="background: #333;">LOCKED</button>
+<div id="gameOverlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeGame()">CLOSE X</span>
+        <iframe id="gameFrame" src=""></iframe>
     </div>
-
 </div>
 
 <script>
-    let tttBoard = document.getElementById("ttt");
-    let current = "X";
-    let cells = [];
-
-    for(let i=0; i<9; i++){
-        let div = document.createElement("div");
-        div.className="cell";
-        div.onclick=function(){
-            if(div.innerHTML==""){
-                div.innerHTML=current;
-                div.style.color = current === "X" ? "#00f2ff" : "#ff4b2b";
-                current = current=="X"?"O":"X";
-            }
-        }
-        tttBoard.appendChild(div);
-        cells.push(div);
+    function openGame(url) {
+        document.getElementById("gameFrame").src = url;
+        document.getElementById("gameOverlay").style.display = "block";
     }
 
-    function reset(){
-        cells.forEach(c=>c.innerHTML="");
+    function closeGame() {
+        document.getElementById("gameOverlay").style.display = "none";
+        document.getElementById("gameFrame").src = ""; // Game stop karne ke liye
     }
 </script>
 
