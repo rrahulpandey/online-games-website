@@ -2,158 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle Crown | Pro Chess ♟️</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Battle Crown | Neon Snake 🐍</title>
     <style>
+        /* 1. DARK NEON THEME */
         body {
-            margin: 0; background: #0a0a0c; color: white;
-            font-family: 'Segoe UI', sans-serif;
-            background-image: linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%);
-            background-size: 50px 50px; animation: moveBg 20s linear infinite;
-        }
-        @keyframes moveBg { from { background-position: 0 0; } to { background-position: 50px 50px; } }
-
-        /* SELECTION SCREEN */
-        #home-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; text-align: center;
-        }
-        .hero-title { font-size: 3.5rem; text-shadow: 0 0 20px #00f2ff; font-weight: bold; }
-        .game-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
-            border: 2px solid #00f2ff; padding: 40px; border-radius: 25px;
-            cursor: pointer; transition: 0.3s; width: 280px; margin-top: 30px;
-        }
-        .game-card:hover { transform: translateY(-10px); box-shadow: 0 0 40px rgba(0, 242, 255, 0.5); }
-
-        /* GAME BOARD AREA */
-        #game-view { display: none; padding: 20px; text-align: center; }
-        #myBoard { width: 400px; margin: 20px auto; max-width: 90vw; border: 5px solid #00f2ff; border-radius: 8px; }
-        
-        .status-bar {
-            background: rgba(0, 242, 255, 0.1); border: 1px solid #00f2ff;
-            padding: 10px 25px; border-radius: 50px; display: inline-block;
-            margin: 15px 0; font-weight: bold; color: #00f2ff;
+            margin: 0; padding: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; height: 100vh;
+            background: #0a0a0c; color: #00f2ff; font-family: 'Arial', sans-serif;
+            overflow: hidden; touch-action: manipulation;
         }
 
+        h1 { margin: 10px 0; text-shadow: 0 0 10px #00f2ff; letter-spacing: 3px; }
+
+        #game-container { position: relative; border: 4px solid #00f2ff; box-shadow: 0 0 20px #00f2ff; }
+
+        canvas { display: block; background: #000; }
+
+        .score-board { font-size: 24px; margin-bottom: 10px; font-weight: bold; }
+
+        /* 2. MOBILE CONTROLS (Only visible on touch devices) */
+        .controls {
+            display: grid; grid-template-columns: repeat(3, 60px); 
+            gap: 10px; margin-top: 20px;
+        }
         .btn {
-            background: #ff4b2b; color: white; border: none; padding: 12px 25px;
-            border-radius: 25px; cursor: pointer; font-weight: bold; margin: 10px;
+            width: 60px; height: 60px; background: rgba(0, 242, 255, 0.2);
+            border: 2px solid #00f2ff; color: white; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer; user-select: none;
         }
-        .btn-home { position: absolute; top: 20px; left: 20px; }
+        .btn:active { background: #00f2ff; color: black; }
+        .up { grid-column: 2; }
+        .left { grid-column: 1; }
+        .down { grid-column: 2; }
+        .right { grid-column: 3; }
 
-        /* Chess Pieces Styling */
-        .piece-417db { width: 100%; }
+        /* 3. GAME OVER OVERLAY */
+        #overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10;
+        }
+        #overlay button {
+            background: #00f2ff; border: none; padding: 10px 20px;
+            font-size: 18px; font-weight: bold; cursor: pointer; border-radius: 5px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="home-screen">
-        <h1 class="hero-title">BATTLE CROWN</h1>
-        <p style="color: #00f2ff; letter-spacing: 5px;">GRANDMASTER EDITION</p>
-        <div class="game-card" onclick="showGame()">
-            <span style="font-size: 60px;">♟️</span>
-            <h2 style="margin: 15px 0;">PLAY CHESS</h2>
-            <p style="color: #888;">Rule-Based Professional Match</p>
+    <h1>BATTLE CROWN</h1>
+    <div class="score-board">Score: <span id="scoreVal">0</span></div>
+
+    <div id="game-container">
+        <canvas id="snakeGame" width="300" height="300"></canvas>
+        <div id="overlay">
+            <h2 style="color: #ff4b2b;">GAME OVER!</h2>
+            <button onclick="resetGame()">PLAY AGAIN</button>
         </div>
     </div>
 
-    <div id="game-view">
-        <button class="btn btn-home" onclick="location.reload()">⬅ EXIT</button>
-        <h2 style="text-shadow: 0 0 10px #00f2ff;">ARENA</h2>
-        
-        <div class="status-bar" id="status">White's Turn</div>
-        <div id="myBoard"></div>
-        
-        <div>
-            <button class="btn" style="background: #00f2ff; color: black;" onclick="resetGame()">RESTART MATCH</button>
-        </div>
+    <div class="controls">
+        <div class="btn up" onclick="changeDir('UP')">▲</div>
+        <div class="btn left" onclick="changeDir('LEFT')">◀</div>
+        <div class="btn down" onclick="changeDir('DOWN')">▼</div>
+        <div class="btn right" onclick="changeDir('RIGHT')">▶</div>
     </div>
 
     <script>
-        var board = null;
-        var game = new Chess();
-        var $status = $('#status');
+        const canvas = document.getElementById("snakeGame");
+        const ctx = canvas.getContext("2d");
+        const box = 20;
+        let score = 0;
+        let gameSpeed = 150;
 
-        function onDragStart (source, piece, position, orientation) {
-            // Game over ho gaya ya wrong turn hai toh piece mat hilne do
-            if (game.game_over()) return false;
+        let snake = [{ x: 140, y: 140 }];
+        let food = { 
+            x: Math.floor(Math.random() * 14 + 1) * box, 
+            y: Math.floor(Math.random() * 14 + 1) * box 
+        };
+        let d = "RIGHT";
 
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
+        // Keyboard Controls
+        document.addEventListener("keydown", (e) => {
+            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT";
+            else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT";
+            else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+
+        // Mobile Control Function
+        function changeDir(dir) {
+            if(dir == "LEFT" && d != "RIGHT") d = "LEFT";
+            if(dir == "UP" && d != "DOWN") d = "UP";
+            if(dir == "RIGHT" && d != "LEFT") d = "RIGHT";
+            if(dir == "DOWN" && d != "UP") d = "DOWN";
+        }
+
+        function draw() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Snake
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#00f2ff" : "#0088aa";
+                ctx.strokeStyle = "black";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
             }
-        }
 
-        function onDrop (source, target) {
-            // Move check karo (Rules ke mutabik)
-            var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // Hamesha queen mein promote hoga simplified rakhne ke liye
-            });
+            // Draw Food
+            ctx.fillStyle = "#ff4b2b";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#ff4b2b";
+            ctx.fillRect(food.x, food.y, box, box);
+            ctx.shadowBlur = 0;
 
-            // Agar move illegal hai (Rule ke khilaaf) toh piece wapas bhej do
-            if (move === null) return 'snapback';
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
 
-            updateStatus();
-        }
+            if (d == "LEFT") snakeX -= box;
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box;
+            if (d == "DOWN") snakeY += box;
 
-        function onSnapEnd () {
-            board.position(game.fen());
-        }
-
-        function updateStatus () {
-            var status = '';
-            var moveColor = 'White';
-            if (game.turn() === 'b') moveColor = 'Black';
-
-            if (game.in_checkmate()) {
-                status = 'CHECKMATE! ' + moveColor + ' Lost.';
-                celebrate();
-            } else if (game.in_draw()) {
-                status = 'GAME DRAW!';
+            // Eat Food Logic
+            if (snakeX == food.x && snakeY == food.y) {
+                score++;
+                document.getElementById("scoreVal").innerText = score;
+                food = {
+                    x: Math.floor(Math.random() * 14 + 1) * box,
+                    y: Math.floor(Math.random() * 14 + 1) * box
+                };
             } else {
-                status = moveColor + "'s Turn";
-                if (game.in_check()) {
-                    status += ' (CHECK!)';
-                }
+                snake.pop();
             }
 
-            $status.html(status);
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Game Over Rules
+            if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                document.getElementById("overlay").style.display = "flex";
+                return;
+            }
+
+            snake.unshift(newHead);
         }
 
-        function showGame() {
-            document.getElementById('home-screen').style.display = 'none';
-            document.getElementById('game-view').style.display = 'block';
-            
-            var config = {
-                draggable: true,
-                position: 'start',
-                onDragStart: onDragStart,
-                onDrop: onDrop,
-                onSnapEnd: onSnapEnd,
-                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
-            };
-            board = Chessboard('myBoard', config);
-            updateStatus();
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
         }
 
         function resetGame() {
-            game.reset();
-            board.start();
-            updateStatus();
+            snake = [{ x: 140, y: 140 }];
+            d = "RIGHT";
+            score = 0;
+            document.getElementById("scoreVal").innerText = score;
+            document.getElementById("overlay").style.display = "none";
+            clearInterval(game);
+            game = setInterval(draw, gameSpeed);
         }
 
-        function celebrate() {
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-        }
+        let game = setInterval(draw, gameSpeed);
     </script>
 </body>
 </html>
