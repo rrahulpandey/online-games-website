@@ -41,6 +41,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 15px; width: 160px; padding: 15px;
         transition: 0.3s;
+        cursor: pointer;
     }
 
     .card:hover { transform: translateY(-10px); border-color: #00f2ff; box-shadow: 0 0 20px rgba(0,242,255,0.3); }
@@ -48,33 +49,44 @@
     .icon-box { font-size: 30px; margin-bottom: 5px; }
     .card h2 { font-size: 14px; color: #00f2ff; margin: 10px 0; }
 
-    button {
+    .play-btn {
         background: linear-gradient(45deg, #00f2ff, #0072ff);
         border: none; padding: 8px; border-radius: 20px;
         color: white; font-weight: bold; cursor: pointer; width: 100%; font-size: 12px;
     }
 
-    /* --- GAME MODAL (FULL SCREEN FEEL) --- */
+    /* --- GAME MODAL --- */
     #gameOverlay {
         display: none;
         position: fixed; top: 0; left: 0;
         width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.98);
+        background: #000;
         z-index: 2000;
     }
 
-    .modal-content {
-        position: relative; width: 100%; height: 100%;
-        background: #000;
+    /* Loading Text */
+    #loadingText {
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px; color: #00f2ff;
     }
 
-    iframe { width: 100%; height: calc(100% - 50px); border: none; margin-top: 50px; }
+    iframe { 
+        width: 100%; height: calc(100% - 60px); 
+        border: none; margin-top: 60px;
+        position: relative; z-index: 2001;
+    }
+
+    .nav-bar-modal {
+        position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+        background: #111; display: flex; justify-content: space-between;
+        align-items: center; padding: 0 20px; box-sizing: border-box;
+    }
 
     .close-btn {
-        position: absolute; top: 10px; right: 20px;
-        color: white; font-size: 18px; cursor: pointer;
-        background: #ff4b2b; padding: 5px 20px; border-radius: 5px;
-        font-weight: bold; z-index: 3000;
+        color: white; font-size: 16px; cursor: pointer;
+        background: #ff4b2b; padding: 8px 20px; border-radius: 5px;
+        font-weight: bold; text-decoration: none;
     }
 </style>
 </head>
@@ -84,36 +96,44 @@
 <h1>BATTLE CROWN 🎮</h1>
 
 <div class="games-container">
-    <div class="card">
+    <div class="card" onclick="openGame('https://games.gamedistribution.com/rvv-host/694809589d3148498c935bc9f18e9503/?gd_sdk_referrer_url=https%3A%2F%2Fgamedistribution.com%2Fgames%2Fmaster-chess')">
         <div class="icon-box">♟️</div>
         <h2>Master Chess</h2>
-        <button onclick="openGame('https://html5.gamedistribution.com/694809589d3148498c935bc9f18e9503/')">PLAY NOW</button>
+        <button class="play-btn">PLAY NOW</button>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="openGame('https://games.gamedistribution.com/rvv-host/56578508e99849209706797960718507/?gd_sdk_referrer_url=https%3A%2F%2Fgamedistribution.com%2Fgames%2Fcyber-cars-punk-racing')">
         <div class="icon-box">🏎️</div>
         <h2>Cyber Cars</h2>
-        <button onclick="openGame('https://html5.gamedistribution.com/56578508e99849209706797960718507/')">PLAY NOW</button>
+        <button class="play-btn">PLAY NOW</button>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="openGame('https://games.gamedistribution.com/rvv-host/83c8340d7c3b490f84803964996962f3/?gd_sdk_referrer_url=https%3A%2F%2Fgamedistribution.com%2Fgames%2Ftic-tac-toe-the-original-game')">
         <div class="icon-box">❌⭕</div>
         <h2>Tic Tac Toe</h2>
-        <button onclick="openGame('https://html5.gamedistribution.com/83c8340d7c3b490f84803964996962f3/')">PLAY NOW</button>
+        <button class="play-btn">PLAY NOW</button>
     </div>
 </div>
 
 <div id="gameOverlay">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeGame()">CLOSE [X]</span>
-        <iframe id="gameFrame" src="" allowfullscreen></iframe>
+    <div class="nav-bar-modal">
+        <span style="color: #00f2ff; font-weight: bold;">BATTLE CROWN PLAYER</span>
+        <div class="close-btn" onclick="closeGame()">CLOSE [X]</div>
     </div>
+    <div id="loadingText">Loading Game... Please Wait</div>
+    <iframe id="gameFrame" src="" allowfullscreen content="origin"></iframe>
 </div>
 
 <script>
     function openGame(url) {
+        document.getElementById("loadingText").style.display = "block";
         document.getElementById("gameFrame").src = url;
         document.getElementById("gameOverlay").style.display = "block";
+        
+        // Game load hone par loading text hatao
+        document.getElementById("gameFrame").onload = function() {
+            document.getElementById("loadingText").style.display = "none";
+        };
     }
 
     function closeGame() {
